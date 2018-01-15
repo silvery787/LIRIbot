@@ -13,7 +13,7 @@ logFileOnly("*** "+arg_arr.slice(2).join(' '));
 switch(command){
 
 	case 'my-tweets':
-		var num = parseInt(parg_arr.slice(3)) || 20;
+		var num = parseInt(arg_arr.slice(3)) || 20;
 		getTwits(num);
 		break;
 
@@ -104,7 +104,7 @@ function spotifySong(name){
 			track.artists.forEach( function(a){
 				artists.push(a.name) ;
 			});
-			
+
 			log( (i+1) + ". " +track.name );
 			log( "Artists: " + artists.join(', '));
 			log( "Album: " + track.album.name );
