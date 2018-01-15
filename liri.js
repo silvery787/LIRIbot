@@ -5,6 +5,9 @@ const keys = require('./keys.js');
 const request = require('request');
 const fs = require('fs');
 
+const Twitter = require('twitter');
+const Spotify = require('node-spotify-api');
+
 const arg_arr = process.argv;
 const command = arg_arr[2];
 
@@ -13,17 +16,17 @@ logFileOnly("*** "+arg_arr.slice(2).join(' '));
 switch(command){
 
 	case 'my-tweets':
-		var num = parseInt(arg_arr.slice(3)) || 20;
+		let num = parseInt(arg_arr.slice(3)) || 20;
 		getTwits(num);
 		break;
 
 	case 'spotify-this-song':
-		var songName = arg_arr.slice(3).join(' ') || 'The Sign Ace of Base';
+		let songName = arg_arr.slice(3).join(' ') || 'The Sign Ace of Base';
 		spotifySong(songName);
 		break;
 
 	case 'movie-this':
-		var movieName = arg_arr.slice(3).join('+') || "Mr.+Nobody";
+		let movieName = arg_arr.slice(3).join('+') || "Mr.+Nobody";
 		getMovie(movieName); 
 		break;
 
@@ -38,7 +41,7 @@ switch(command){
 
 function getMovie(name){
 
-	var queryUrl = "http://www.omdbapi.com/?t=" + name + "&y=&plot=short&apikey=trilogy";
+	let queryUrl = "http://www.omdbapi.com/?t=" + name + "&y=&plot=short&apikey=trilogy";
 
 	request(queryUrl, function(error, response, body) {
 		if (!error && response.statusCode === 200) {
@@ -64,12 +67,10 @@ function getMovie(name){
 }
 
 function getTwits(num){
-
-	var Twitter = require('twitter');
  
-	var client = new Twitter( keys.twitterKeys );
+	let client = new Twitter( keys.twitterKeys );
 	 
-	var params = {screen_name: 'nodejs'};
+	let params = {screen_name: 'nodejs'};
 	client.get('statuses/user_timeline', { screen_name: 'silvery_bc', count: num }, function(error, tweets, response) {
 	    if (!error) {
 
@@ -86,10 +87,8 @@ function getTwits(num){
 }
 
 function spotifySong(name){
-
-	var Spotify = require('node-spotify-api');
  
-	var spotify = new Spotify( keys.spotifyKeys );
+	let spotify = new Spotify( keys.spotifyKeys );
  
 	spotify.search({ type: 'track', query: name }, function(err, data) {
 		if (err) {
@@ -97,15 +96,15 @@ function spotifySong(name){
     		//return console.log('spotify error: ' + err);
 		}
 
-		var num = Math.min(MAXsongs, data.tracks.items.length);
+		let num = Math.min(MAXsongs, data.tracks.items.length);
 		
 		console.log( '------------------------' );
 		if(num === 0) log('Song not found');
-		
-		for(var i=0; i<num; i++){
 
-			var track = data.tracks.items[i];
-			var artists = [];
+		for(let i=0; i<num; i++){
+
+			let track = data.tracks.items[i];
+			let artists = [];
 			track.artists.forEach( function(a){
 				artists.push(a.name) ;
 			});
@@ -127,29 +126,29 @@ function commandFromFile( filename ){
     		return console.log("File reading error: "+err);
   		}
 
-  		var [cmd, prm] = data.split(',');
-		log(cmd +': '+ prm);
+  		let [cmd, param] = data.split(',');
+		log(cmd +': '+ param);
 
 		switch(cmd){
 
 			case 'my-tweets':
-				params = arg_arr.slice(3);
-				var num = parseInt(prm) || 20;
+				param = arg_arr.slice(3);
+				let num = parseInt(param) || 20;
 				getTwits(num);
 				break;
 
 			case 'spotify-this-song':
-				spotifySong(prm);
+				spotifySong(param);
 				break;
 
 			case 'movie-this':
-				prm.replace(/'"/g , '');
-				prm.replace(/\s/g , '+');
-				getMovie(prm); 
+				param.replace(/'"/g , '');
+				param.replace(/\s/g , '+');
+				getMovie(param); 
 				break;
 
 			default: 
-				console.log("Unknown command in file!\nUse Cases: my-tweets/spotify-this-song/movie-this");	
+				console.log("Unknown command in file!\nPossible comands: my-tweets/spotify-this-song/movie-this");	
 				console.log('------------------------------------');
 		}
 	});
