@@ -42,17 +42,20 @@ function getMovie(name){
 
 	request(queryUrl, function(error, response, body) {
 		if (!error && response.statusCode === 200) {
-
-			log("=====  "+JSON.parse(body).Title+"  =====");
-			log("Released: "+ JSON.parse(body).Year);
-			log("IMDB Rating: "+ JSON.parse(body).imdbRating);
-			log("Rotten Tomatoes Rating: "+ JSON.parse(body).Ratings[1].Value);
-			log("Country: "+ JSON.parse(body).Country);
-			log("Language: "+ JSON.parse(body).Language);
-			log("Plot: "+ JSON.parse(body).Plot);
-			log("Actors: "+ JSON.parse(body).Actors);
-			log('-------------------------------------');
-
+			if(JSON.parse(body).Response === "True"){
+				log("=====  "+JSON.parse(body).Title+"  =====");
+				log("Released: "+ JSON.parse(body).Year);
+				log("IMDB Rating: "+ JSON.parse(body).imdbRating);
+				log("Rotten Tomatoes Rating: "+ JSON.parse(body).Ratings[1].Value);
+				log("Country: "+ JSON.parse(body).Country);
+				log("Language: "+ JSON.parse(body).Language);
+				log("Plot: "+ JSON.parse(body).Plot);
+				log("Actors: "+ JSON.parse(body).Actors);
+				log('-------------------------------------');
+			}
+			else if(JSON.parse(body).Response === "False"){
+				log(JSON.parse(body).Error);
+			}
 		}
 		else if(error){
 			log("OMDBapi ERROR: " + error);
@@ -97,6 +100,8 @@ function spotifySong(name){
 		var num = Math.min(MAXsongs, data.tracks.items.length);
 		
 		console.log( '------------------------' );
+		if(num === 0) log('Song not found');
+		
 		for(var i=0; i<num; i++){
 
 			var track = data.tracks.items[i];
